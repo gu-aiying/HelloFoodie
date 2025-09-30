@@ -1,4 +1,4 @@
-package com.example.hellofoodie.ui.slideshow
+package com.example.hellofoodie.presentation.slideshow
 
 import android.os.Bundle
 import android.view.LayoutInflater

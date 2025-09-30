@@ -1,4 +1,4 @@
-package com.example.hellofoodie.ui.slideshow
+package com.example.hellofoodie.presentation.slideshow
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
