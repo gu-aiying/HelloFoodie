@@ -48,7 +48,6 @@ object NetworkModule {
     @Singleton
     @Named("SpoonacularApi")
     fun provideSpooncularRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
-        val contentType = "application/json".toMediaType()
 
         return Retrofit.Builder()
             .baseUrl("https://api.spoonacular.com")
@@ -62,6 +61,5 @@ object NetworkModule {
     fun provideSpooncularApiService(@Named("SpoonacularApi") retrofit: Retrofit): SpooncularApiService {
         return retrofit.create(SpooncularApiService::class.java)
     }
-
 
 }

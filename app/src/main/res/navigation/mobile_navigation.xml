@@ -14,6 +14,10 @@
         <action
             android:id="@+id/action_popular_recipes_fragment_to_recipe_detail_fragment"
             app:destination="@id/recipe_detail_fragment" />
+
+        <action
+            android:id="@+id/action_popular_recipes_fragment_to_search_fragment"
+            app:destination="@+id/search_fragment" />
     </fragment>
 
     <fragment
@@ -23,15 +27,20 @@
         tools:layout="@layout/fragment_recipe_detail">
         <argument
             android:name="recipeId"
-            app:argType="long"
-            android:defaultValue="-1L"/>
+            android:defaultValue="-1L"
+            app:argType="long" />
     </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.hellofoodie.presentation.gallery.GalleryFragment"
+        android:id="@+id/search_fragment"
+        android:name="com.example.hellofoodie.presentation.search.SearchFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_search">
+
+        <action
+            android:id="@+id/action_search_fragment_to_recipe_detail_fragment"
+            app:destination="@+id/recipe_detail_fragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_slideshow"

@@ -42,15 +42,11 @@ class RecipeRemoteMediator @Inject constructor (
                LoadType.REFRESH, LoadType.APPEND -> Unit
            }
             // Загружать данные по API
-            val response = spooncularApiService.getRandomRecipes(number = 10)
+            val response = spooncularApiService.getRandomRecipes(number = 20)
             val recipes = response.recipes
 
             // Управление БД
             appDatabase.withTransaction { // для обеспечения атомарности и целостности данных
-                // Очищать БД при Refresh
-                if (loadType == LoadType.REFRESH) {
-                    recipeDao.clearAllRecipes() // Выполняем DELETE FROM recipes
-                }
 
                 saveRandomRecipes(recipes)
             }

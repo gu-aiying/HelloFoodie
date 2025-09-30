@@ -12,6 +12,7 @@ import com.example.hellofoodie.data.local.mapper.IngredientMapper
 import com.example.hellofoodie.data.local.mapper.RecipeMapper
 import com.example.hellofoodie.data.mediator.RecipeRemoteMediator
 import com.example.hellofoodie.data.remote.api.SpooncularApiService
+import com.example.hellofoodie.di.NetworkMonitor
 import com.example.hellofoodie.domain.model.BasicRecipe
 import com.example.hellofoodie.domain.model.Recipe
 import com.example.hellofoodie.domain.repository.RecipeRepository
@@ -25,13 +26,14 @@ class RecipeRepositoryImpl @Inject constructor(
     private val spooncularApiService: SpooncularApiService,
     private val appDatabase: AppDatabase,
     private val recipeMapper: RecipeMapper,
-    private val ingredientMapper: IngredientMapper
+    private val ingredientMapper: IngredientMapper,
+    private val networkMonitor: NetworkMonitor
 ) : RecipeRepository {
     @OptIn(ExperimentalPagingApi::class)
     override fun getPopularRecipes(): Flow<PagingData<BasicRecipe>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 5,
+                pageSize = 10,
                 enablePlaceholders = false
             ),
             remoteMediator = RecipeRemoteMediator(
@@ -50,12 +52,22 @@ class RecipeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getRecipeDetail(recipeId: Long): Recipe {
-        val recipeEntity = recipeDao.getRecipeById(recipeId) ?: throw Exception("Recipe not found")
-        val extendedIngredients = extendedIngredientDao.getIngredientsByRecipeId(recipeId)
-        return recipeMapper.toRecipe(
-            recipeEntity = recipeEntity,
-            ingredients = extendedIngredients
-        )
+    override suspend fun getRecipeDetail(recipeId: Long): Recipe? {
+        // сначала искать в БД
+        val recipeEntity = recipeDao.getRecipeById(recipeId)
+        if (recipeEntity != null) {
+            val extendedIngredients = extendedIngredientDao.getIngredientsByRecipeId(recipeId)
+            return recipeMapper.toRecipe(
+                recipeEntity = recipeEntity,
+                ingredients = extendedIngredients
+            )
+
+        } else if (networkMonitor.isOnline()) {
+            // искать по api
+            return spooncularApiService.getRecipeInformation(recipeId)
+        } else {
+            return null
+        }
     }
+
 }

@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface RecipeRepository {
     fun getPopularRecipes(): Flow<PagingData<BasicRecipe>>
 
-    suspend fun getRecipeDetail(recipeId: Long): Recipe
+    suspend fun getRecipeDetail(recipeId: Long): Recipe?
 }

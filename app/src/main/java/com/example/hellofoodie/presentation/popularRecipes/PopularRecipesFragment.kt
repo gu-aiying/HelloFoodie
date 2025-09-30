@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -51,13 +52,47 @@ class PopularRecipesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeUiState()
+//        observeUiState()
 
         binding.apply {
             rvPopularRecipes.layoutManager = LinearLayoutManager(requireContext())
             rvPopularRecipes.adapter = popularRecipesAdapter
 
             // Сбор LoadStateFlow (поток состояний списка)
+            observeLoadState()
+
+            // Следить за изменением данных
+            viewLifecycleOwner.lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    popularRecipesViewModel.popularRecipes.collectLatest { pagingData ->
+                        popularRecipesAdapter.submitData(pagingData)
+                    }
+                }
+            }
+
+            // Запрещать фокус у searchBar
+            popularRecipesSearchBar.etSearch.apply {
+                isFocusable = false
+                isClickable = true
+            }
+
+            // Перейти на экран поиска
+            popularRecipesSearchBar.etSearch.setOnClickListener {
+                val action = PopularRecipesFragmentDirections.actionPopularRecipesFragmentToSearchFragment()
+                findNavController().navigate(action)
+            }
+
+        }
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun observeLoadState() {
+        binding.apply {
             viewLifecycleOwner.lifecycleScope.launch {
                 popularRecipesAdapter.loadStateFlow.collectLatest { loadStates ->
 
@@ -91,37 +126,24 @@ class PopularRecipesFragment : Fragment() {
                 }
             }
         }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                popularRecipesViewModel.popularRecipes.collectLatest { pagingData ->
-                    popularRecipesAdapter.submitData(pagingData)
-                }
-            }
-        }
-
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 
-    private fun observeUiState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                popularRecipesViewModel.uiState.collect { uiState ->
-                    when (uiState) {
-                        is PopularRecipesUiState.Initial,
-                        is PopularRecipesUiState.Loading -> {
-                        }
-
-                        is PopularRecipesUiState.Success -> {}
-                        is PopularRecipesUiState.Error -> {}
-                    }
-                }
-            }
-        }
-    }
+//    private fun observeUiState() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                popularRecipesViewModel.uiState.collect { uiState ->
+//                    when (uiState) {
+//                        is PopularRecipesUiState.Initial,
+//                        is PopularRecipesUiState.Loading -> {
+//                        }
+//
+//                        is PopularRecipesUiState.Success -> {}
+//                        is PopularRecipesUiState.Error -> {}
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 }

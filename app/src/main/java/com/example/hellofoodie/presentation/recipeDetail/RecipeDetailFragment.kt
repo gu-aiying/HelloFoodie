@@ -87,12 +87,20 @@ class RecipeDetailFragment : Fragment() {
                     errorMessage.isVisible = false
                 }
 
+                RecipeDetailUiState.Empty -> {
+                    progressBar.isVisible = false
+                    contentGroup.isVisible = false
+                    errorMessage.setText(R.string.nothing_found)
+                    errorMessage.isVisible = true
+                }
+
                 is RecipeDetailUiState.Success -> {
                     progressBar.isVisible = false
                     contentGroup.isVisible = true
                     errorMessage.isVisible = false
                     // Обновить данные
-                    val detail = state.recipeDetail
+                    val detail = state.recipeDetail!!
+
                     tvRecipeBasicInfo.tvRecipeTitle.text = detail.title
                     tvRecipeBasicInfo.tvTags
 
@@ -140,9 +148,15 @@ class RecipeDetailFragment : Fragment() {
                     contentGroup.isVisible = false
                     errorMessage.isVisible = true
                 }
+
             }
         }
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun htmlToString(text: String): Spanned {

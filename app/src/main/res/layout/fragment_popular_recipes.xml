@@ -12,43 +12,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-smallcaps"
-        android:paddingTop="10dp"
+        android:paddingVertical="20dp"
         android:text="@string/welcome"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/search_bar"
+        app:layout_constraintBottom_toTopOf="@+id/popular_recipes_search_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/search_bar"
+    <include
+        android:id="@+id/popular_recipes_search_bar"
+        layout="@layout/search_component"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="15dp"
-        app:boxBackgroundColor="@android:color/system_neutral1_100"
-        app:endIconDrawable="@android:drawable/ic_menu_search"
-        app:endIconMode="custom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_welcome">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_search"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:hint="@string/search_recipe"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:paddingStart="20dp"
-            android:textColorHint="@color/black"
-            android:textSize="16sp" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome" />
 
     <TextView
         android:id="@+id/tv_categories"
@@ -62,7 +44,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/popular_recipes_search_bar" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_categories"

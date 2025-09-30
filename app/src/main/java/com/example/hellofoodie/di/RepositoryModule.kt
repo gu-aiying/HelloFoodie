@@ -7,7 +7,9 @@ import com.example.hellofoodie.data.local.mapper.IngredientMapper
 import com.example.hellofoodie.data.local.mapper.RecipeMapper
 import com.example.hellofoodie.data.remote.api.SpooncularApiService
 import com.example.hellofoodie.data.repositoryImpl.RecipeRepositoryImpl
+import com.example.hellofoodie.data.repositoryImpl.SearchRepositoryImpl
 import com.example.hellofoodie.domain.repository.RecipeRepository
+import com.example.hellofoodie.domain.repository.SearchRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,7 +28,8 @@ object RepositoryModule {
         spooncularApiService: SpooncularApiService,
         appDatabase: AppDatabase,
         recipeMapper: RecipeMapper,
-        ingredientMapper: IngredientMapper
+        ingredientMapper: IngredientMapper,
+        networkMonitor: NetworkMonitor
     ): RecipeRepository {
         return RecipeRepositoryImpl(
             recipeDao = recipeDao,
@@ -34,7 +37,22 @@ object RepositoryModule {
             spooncularApiService = spooncularApiService,
             appDatabase = appDatabase,
             recipeMapper = recipeMapper,
-            ingredientMapper = ingredientMapper
+            ingredientMapper = ingredientMapper,
+            networkMonitor = networkMonitor
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideSearchRepository(
+        networkMonitor: NetworkMonitor,
+        recipeDao: RecipeDao,
+        spooncularApiService: SpooncularApiService
+    ): SearchRepository {
+        return SearchRepositoryImpl(
+            networkMonitor, recipeDao,
+            spooncularApiService = spooncularApiService
+        )
+    }
+
 }

@@ -28,7 +28,13 @@ class RecipeDetailViewModel @Inject constructor(
         .flatMapLatest { recipeId -> // когда id меняется, то автоматически начнется собрать рецепт
             getRecipeDetailUseCase(recipeId).map { result ->
                 result.fold(
-                    onSuccess = { RecipeDetailUiState.Success(it) },
+                    onSuccess = {
+                        if (it == null) {
+                            RecipeDetailUiState.Empty
+                        } else {
+                            RecipeDetailUiState.Success(it)
+                        }
+                    },
                     onFailure = { RecipeDetailUiState.Error("Something went wrong: ${it.message}") }
                 )
             }

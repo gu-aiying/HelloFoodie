@@ -12,7 +12,7 @@ import javax.inject.Inject
 class GetRecipeDetailUseCase @Inject constructor(
     private val recipeRepository: RecipeRepository
 ) {
-    operator fun invoke(recipeId: Long): Flow<Result<Recipe>> =
+    operator fun invoke(recipeId: Long): Flow<Result<Recipe?>> =
         flow {
             val recipe = recipeRepository.getRecipeDetail(recipeId)
             emit(Result.success(recipe))

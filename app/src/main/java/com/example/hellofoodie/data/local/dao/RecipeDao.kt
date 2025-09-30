@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.hellofoodie.data.local.entity.RecipeEntity
+import com.example.hellofoodie.domain.model.QueryAutoComplete
 
 @Dao
 interface RecipeDao {
@@ -14,8 +15,11 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes ORDER BY aggregateLikes DESC")
     fun getPopularRecipes(): PagingSource<Int, RecipeEntity>
 
-    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' ORDER BY id")
+    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' ORDER BY title")
     fun searchRecipes(query: String): PagingSource<Int, RecipeEntity>
+
+    @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' ORDER BY title")
+    suspend fun queryAutoComplete(query: String): List<RecipeEntity>
 
     @Query("SELECT * FROM recipes WHERE id = :recipeId")
     suspend fun getRecipeById(recipeId: Long): RecipeEntity?

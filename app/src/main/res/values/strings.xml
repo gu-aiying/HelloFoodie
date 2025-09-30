@@ -18,6 +18,7 @@
     <string name="no_summary">No summary yet</string>
     <string name="ingredients">Ingredients</string>
     <string name="category">category</string>
+    <string name="nothing_found">Nothing found</string>
     <plurals name="recipe_likes_count">
         <item quantity="one">%d like</item>
         <item quantity="other">%d likes</item>
