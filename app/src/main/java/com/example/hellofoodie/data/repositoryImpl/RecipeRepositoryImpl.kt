@@ -31,9 +31,12 @@ class RecipeRepositoryImpl @Inject constructor(
 ) : RecipeRepository {
     @OptIn(ExperimentalPagingApi::class)
     override fun getPopularRecipes(): Flow<PagingData<BasicRecipe>> {
+
+        val pageSize = 10
+
         return Pager(
             config = PagingConfig(
-                pageSize = 10,
+                pageSize = pageSize,
                 enablePlaceholders = false
             ),
             remoteMediator = RecipeRemoteMediator(
@@ -42,7 +45,8 @@ class RecipeRepositoryImpl @Inject constructor(
                 spooncularApiService = spooncularApiService,
                 appDatabase = appDatabase,
                 recipeMapper = recipeMapper,
-                ingredientMapper = ingredientMapper
+                ingredientMapper = ingredientMapper,
+                pageSize = pageSize
             ),
             pagingSourceFactory = { recipeDao.getPopularRecipes() }
         ).flow.map { pagingData ->

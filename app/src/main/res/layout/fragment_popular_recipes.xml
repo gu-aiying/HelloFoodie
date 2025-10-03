@@ -95,12 +95,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_popular_recipes"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_popular_recipes"
-        tools:listitem="@layout/item_recipe" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_popular_recipes">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_popular_recipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/item_recipe" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

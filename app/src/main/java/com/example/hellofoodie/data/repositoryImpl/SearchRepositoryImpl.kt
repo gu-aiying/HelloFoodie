@@ -1,7 +1,6 @@
 package com.example.hellofoodie.data.repositoryImpl
 
 import com.example.hellofoodie.data.local.dao.RecipeDao
-import com.example.hellofoodie.data.local.entity.RecipeEntity
 import com.example.hellofoodie.data.remote.api.SpooncularApiService
 import com.example.hellofoodie.di.NetworkMonitor
 import com.example.hellofoodie.domain.model.QueryAutoComplete

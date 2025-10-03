@@ -70,6 +70,11 @@ class PopularRecipesFragment : Fragment() {
                 }
             }
 
+            swipeRefreshLayout.setOnRefreshListener {
+                // Использовать adapter.refresh() для запуска RemoteMediator
+                popularRecipesAdapter.refresh()
+            }
+
             // Запрещать фокус у searchBar
             popularRecipesSearchBar.etSearch.apply {
                 isFocusable = false
@@ -101,9 +106,10 @@ class PopularRecipesFragment : Fragment() {
                     TransitionManager.beginDelayedTransition(binding.root, AutoTransition())
 
                     if (refreshState is LoadState.Loading) {
-                        progressBar.isVisible = true
+                        // progressBar.isVisible = true
                         rvPopularRecipes.isVisible = false
                     } else { // успешно или с ошибкой
+                        swipeRefreshLayout.isRefreshing = false
                         progressBar.isVisible = false
                         rvPopularRecipes.isVisible = true
                     }

@@ -1,7 +1,6 @@
 package com.example.hellofoodie.data.remote.api
 
 import com.example.hellofoodie.data.remote.dto.RandomRecipeResponseDto
-import com.example.hellofoodie.data.remote.dto.QueryAutoCompleteDto
 import com.example.hellofoodie.data.remote.dto.RecipeSearchResultDto
 import com.example.hellofoodie.domain.model.QueryAutoComplete
 import com.example.hellofoodie.domain.model.Recipe

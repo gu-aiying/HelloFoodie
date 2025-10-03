@@ -18,41 +18,51 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
-class RecipeRemoteMediator @Inject constructor (
+class RecipeRemoteMediator @Inject constructor(
     private val recipeDao: RecipeDao,
     private val extendedIngredientDao: ExtendedIngredientDao,
     private val spooncularApiService: SpooncularApiService,
     private val appDatabase: AppDatabase,
     private val recipeMapper: RecipeMapper,
-    private val ingredientMapper: IngredientMapper
-): RemoteMediator<Int, RecipeEntity>() {
+    private val ingredientMapper: IngredientMapper,
+    private val pageSize: Int
+) : RemoteMediator<Int, RecipeEntity>() {
 
     override suspend fun load(
         loadType: LoadType,
         state: PagingState<Int, RecipeEntity>
     ): MediatorResult {
-       return try {
-           val page = when (loadType) {
-               // Свайп наверх
-               LoadType.PREPEND -> {
-                   // C помощью endOfPaginationReached = true запретить загрузку новых данных при свайпе вверх
-                   return MediatorResult.Success(endOfPaginationReached = true)
-               }
-               // REFRESH и APPEND проходят дальше для выполнения сетевого запроса
-               LoadType.REFRESH, LoadType.APPEND -> Unit
-           }
-            // Загружать данные по API
-            val response = spooncularApiService.getRandomRecipes(number = 20)
-            val recipes = response.recipes
+        return try {
+            when (loadType) {
+                LoadType.PREPEND -> {
+                    return MediatorResult.Success(endOfPaginationReached = true)
+                }
 
-            // Управление БД
-            appDatabase.withTransaction { // для обеспечения атомарности и целостности данных
+                LoadType.REFRESH -> {
+                    // REFRESH: чистить кэш и добавить новые рецепты в БД
+                    val response = spooncularApiService.getRandomRecipes(number = pageSize)
+                    val recipes = response.recipes
 
-                saveRandomRecipes(recipes)
+                    appDatabase.withTransaction {
+                        recipeDao.clearAllRecipes()
+                        saveRandomRecipes(recipes)
+                    }
+
+                    return MediatorResult.Success(endOfPaginationReached = false)
+                }
+
+                LoadType.APPEND -> {
+                    // APPEND : добавить новые рецепты в БД, но не чистить кэш
+                    val response = spooncularApiService.getRandomRecipes(number = pageSize)
+                    val recipes = response.recipes
+
+                    appDatabase.withTransaction {
+                        saveRandomRecipes(recipes)
+                    }
+
+                    return MediatorResult.Success(endOfPaginationReached = false)
+                }
             }
-
-            MediatorResult.Success(endOfPaginationReached = false)
-
         } catch (e: IOException) {
             MediatorResult.Error(e)
         } catch (e: HttpException) {
